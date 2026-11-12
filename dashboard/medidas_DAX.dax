@@ -1,0 +1,18 @@
+// Medidas DAX del dashboard (tabla _Medidas en Power BI)
+// Modelo en estrella: ventas en el centro, relacionada con clientes,
+// productos, geografia y la tabla calendario Dim_Fechas (por order_date).
+
+Ventas Netas = SUM(ventas[ventas_netas])
+Ganancia = SUM(ventas[ganancia])
+Margen % = DIVIDE([Ganancia], [Ventas Netas])
+Pedidos = DISTINCTCOUNT(ventas[order_id])
+Clientes Unicos = DISTINCTCOUNT(ventas[customer_id])
+Ticket Promedio = DIVIDE([Ventas Netas], [Pedidos])
+Mediana Ticket = MEDIAN(ventas[ventas_netas])
+Tasa Devolucion = DIVIDE(SUM(ventas[devuelto]), COUNTROWS(ventas))
+Ventas Año Anterior = CALCULATE([Ventas Netas], SAMEPERIODLASTYEAR(Dim_Fechas[Date]))
+Var % Año Anterior = VAR _ant = [Ventas Año Anterior]
+                     RETURN DIVIDE([Ventas Netas] - _ant, _ant)
+Ventas Mes Anterior = CALCULATE([Ventas Netas], DATEADD(Dim_Fechas[Date], -1, MONTH))
+Var % Mes Anterior = VAR _ant = [Ventas Mes Anterior]
+                     RETURN DIVIDE([Ventas Netas] - _ant, _ant)
